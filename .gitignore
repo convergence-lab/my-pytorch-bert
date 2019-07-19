@@ -116,3 +116,6 @@ dmypy.json
 .pyre/
 
 data/
+
+pretrain/
+bert-wiki-ja/

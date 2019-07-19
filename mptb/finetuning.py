@@ -1,4 +1,5 @@
 # Author Toshihiko Aoki
+# Editted Masash Kimura
 #
 # Copyright 2018 The Google AI Language Team Authors
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,3 +39,18 @@ class Classifier(nn.Module):
         _, pooled_output = self.bert(input_ids, segment_ids, input_mask)
         return self.classifier(self.dropout(pooled_output))
 
+class Regressor(nn.Module):
+    """Bert fine-tuning regressor"""
+
+    def __init__(self, config, output_num):
+        super().__init__()
+
+        self.bert = BertModel(config)
+        self.dropout = nn.Dropout(config.hidden_dropout_prob)
+        self.regressor = nn.Linear(config.hidden_size, output_num)
+        self.scaler = nn.Parameter([1.]*output_num)
+        self.scaler.requires_grad = True
+
+    def forward(self, input_ids, segment_ids, input_mask):
+        _, pooled_output = self.bert(input_ids, segment_ids, input_mask)
+        return self.scaler*torch.sigmoid(self.dropout(self.regressor(pooled_output)))

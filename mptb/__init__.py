@@ -7,3 +7,4 @@ from .bert import Config, BertModel
 from .optimization import BertAdam
 from .pretrain import BertPretrainier
 from .classification import BertClassifier
+from .regression import BertRegressor
