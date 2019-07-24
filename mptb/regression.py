@@ -292,7 +292,7 @@ class BertRegressor(object):
             if logger is not None:
                 mae = 0
                 for t, p in zip(y_trues, y_preds):
-                    mae += mean_absolute_error(t, p
+                    mae += mean_absolute_error(t, p)
                 logger.info(str(mae/len(y_trues)))
             else:
                 mae = 0
