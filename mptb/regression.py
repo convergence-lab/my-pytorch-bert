@@ -183,7 +183,7 @@ class BertRegressor(object):
 
         if sampler is None:
             if balance_sample:
-                sampler = BertClassifier.get_class_balanced_sampler(dataset)
+                sampler = BertRegressor.get_class_balanced_sampler(dataset)
             else:
                 sampler = RandomSampler(dataset)
 
@@ -290,10 +290,8 @@ class BertRegressor(object):
                     y_trues.append(t)
 
             if logger is not None:
-                mae = mean_absolute_error(y_trues, y_preds, output_dict=True)
-                for k, v in mae.items():
-                    for ck, cv in v.items():
-                        logger.info(str(k) + "," + str(ck) + "," + str(cv))
+                mae = mean_absolute_error(y_trues, y_preds)
+                logger.info(str(mae))
             else:
                 print(mean_absolute_error(y_trues, y_preds))
 
