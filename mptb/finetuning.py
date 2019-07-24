@@ -48,9 +48,10 @@ class Regressor(nn.Module):
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.regressor = nn.Linear(config.hidden_size, output_num)
-        self.scaler = nn.Parameter([1.]*output_num)
+        self.scaler = nn.Parameter(torch.tensor([1.]*output_num, requires_grad=True, dtype=torch.float))
         self.scaler.requires_grad = True
 
-    def forward(self, input_ids, segment_ids, input_mask):
-        _, pooled_output = self.bert(input_ids, segment_ids, input_mask)
-        return self.scaler*torch.sigmoid(self.dropout(self.regressor(pooled_output)))
+    def forward(self, input_ids, input_mask):
+        _, pooled_output = self.bert(input_ids, input_mask)
+        x =  self.scaler*torch.sigmoid(self.dropout(self.regressor(pooled_output)))
+        return x

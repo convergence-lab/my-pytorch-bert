@@ -82,7 +82,7 @@ def load_vocab(vocab_file):
         import tensorflow as tf
         with tf.io.gfile.GFile(vocab_file, "r") as reader:
             return token_vocab_build(reader)
-            
+
     except ImportError:
         with open(vocab_file, "r", encoding='utf-8') as reader:
             return token_vocab_build(reader)
@@ -164,7 +164,7 @@ class SentencePieceTokenizer(object):
 
     def __init__(self, model_file=None, preprocessor=None):
         if model_file is None:
-            raise ValueError("You have to give a path of trained SentencePiece model.")        
+            raise ValueError("You have to give a path of trained SentencePiece model.")
         """Constructs a SentencePieceTokenizer."""
         self.tokenizer = sp.SentencePieceProcessor()
         self.tokenizer.Load(model_file)
@@ -179,4 +179,3 @@ class SentencePieceTokenizer(object):
         text = self.preprocessor(text) if self.preprocessor is not None else text
         output_tokens = self.tokenizer.EncodeAsPieces(text)
         return output_tokens
-

@@ -17,13 +17,13 @@
 import os
 from collections import namedtuple
 import torch
-from torch.nn import CrossEntropyLoss
+from torch.nn import SmoothL1Loss
 from torch.utils.data import RandomSampler, WeightedRandomSampler
 
 from .bert import Config
 from .optimization import get_optimizer
 from .finetuning import Regressor
-from .class_dataset import ClassDataset
+from .regression_dataset import RegressionDataset
 from .helper import Helper
 from .utils import save, load, get_logger, make_balanced_classes_weights, get_tokenizer, load_from_google_bert_model
 
@@ -48,9 +48,6 @@ class BertRegressor(object):
         under_sampling=False,
         fp16=False,
     ):
-        if len(output_scaler) != output_num:
-            raise Exception("Length of output_scaler and output_num must be same.")
-
         if tokenizer is None:
             self.tokenizer = get_tokenizer(
                 vocab_path=vocab_path, sp_model_path=sp_model_path, name=tokenizer_name)
@@ -63,7 +60,7 @@ class BertRegressor(object):
         if dataset_path is not None:
             self.dataset = self.get_dataset(
                 self.tokenizer,
-                dataset_path,
+                dataset_path=dataset_path,
                 header_skip=header_skip, under_sampling=under_sampling)
             label_num = self.dataset.label_num()
 
@@ -102,8 +99,7 @@ class BertRegressor(object):
 
         if tokenizer is None:
             raise ValueError('dataset require tokenizer')
-
-        return ClassDataset(
+        return RegressionDataset(
             tokenizer=tokenizer, max_pos=self.max_pos, dataset_path=dataset_path, header_skip=header_skip,
             sentence_a=sentence_a, sentence_b=sentence_b, labels=labels,
             under_sampling=under_sampling
@@ -169,12 +165,12 @@ class BertRegressor(object):
         optimizer = get_optimizer(
             model=self.model, lr=lr, warmup_steps=warmup_steps, max_steps=max_steps, fp16=self.helper.fp16)
 
-        criterion = MSELoss()
+        criterion = SmoothL1Loss()
 
         def process(batch, model, iter_bar, epochs, step):
-            input_ids, segment_ids, input_mask, label_id = batch
-            logits = model(input_ids, segment_ids, input_mask)
-            loss = criterion(logits.view(-1, self.model.label_len), label_id.view(-1))
+            input_ids, input_mask, label_id = batch
+            logits = model(input_ids, input_mask)
+            loss = criterion(logits.view(-1), label_id.view(-1))
             return loss
 
         if self.helper.fp16:
@@ -246,7 +242,7 @@ class BertRegressor(object):
         if sampler is None:
             sampler = RandomSampler(dataset)
 
-        criterion = MSELoss()
+        criterion = SmoothL1Loss()
 
         Example = namedtuple('Example', ('pred', 'true'))
         logger = None
@@ -254,8 +250,8 @@ class BertRegressor(object):
             logger = get_logger('eval', log_dir, False)
 
         def process(batch, model, iter_bar, step):
-            input_ids, segment_ids, input_mask, label_id = batch
-            logits = model(input_ids, segment_ids, input_mask)
+            input_ids, input_mask, label_id = batch
+            logits = model(input_ids, input_mask)
             loss = criterion(logits.view(-1, self.model.label_len), label_id.view(-1))
             _, label_pred = logits.max(1)
             example = Example(label_pred.tolist(), label_id.tolist())
@@ -329,8 +325,8 @@ class BertRegressor(object):
         def process(batch, model, iter_bar, step):
             if batch.is_cuda:
                 self.output_scaler = self.output_scaler.cuda()
-            input_ids, segment_ids, input_mask = batch
-            logits = model(input_ids, segment_ids, input_mask)
+            input_ids, input_mask = batch
+            logits = model(input_ids, input_mask)
             output = logits * output_scaler
             return output.tolist()
 

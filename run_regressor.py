@@ -15,7 +15,7 @@
 
 from mptb import BertRegressor
 
-def classification(
+def regression(
     config_path='config/bert_base.json',
     train_dataset_path='tests/sample_text_class.txt',
     eval_dataset_path='tests/sample_text_class.txt',
@@ -33,14 +33,14 @@ def classification(
     epochs=5,
     per_save_epochs=1,
     mode='train',
-    label_num=-1,
+    output_num=-1,
     balance_weight=False,
     balance_sample=False,
     under_sampling=False,
     under_sampling_cycle=False,
     tokenizer_name='google',
     read_head=False,
-    fp16=False
+    fp16=False,
 ):
 
     if under_sampling_cycle:
@@ -55,12 +55,10 @@ def classification(
             tf_pretrain_path=tf_pretrain_path,
             dataset_path=train_dataset_path,
             header_skip=not read_head,
-            output_num=label_num,
-            output_scaler=output_scaler,
+            output_num=output_num,
             tokenizer_name=tokenizer_name,
             under_sampling=under_sampling,
-            fp16=fp16
-        )
+            fp16=fp16)
 
         estimator.train(
             traing_model_path=model_path,
@@ -82,7 +80,7 @@ def classification(
         print(score)
 
     else:
-        estimator = BertClassifier(
+        estimator = BertRegressor(
             config_path=config_path,
             max_pos=max_pos,
             vocab_path=vocab_path,
@@ -137,7 +135,8 @@ if __name__ == '__main__':
                         type=int, default=1)
     parser.add_argument('--mode', help='train or eval', nargs='?',
                         type=str, default='train')
-    parser.add_argument('--label_num', help='labels number', nargs='?',
+    parser.add_argument('--output_num', help='output number',
+                        nargs='?',
                         type=int, default=-1)
     parser.add_argument('--balance_weight', action='store_true',
                         help='Use automatically adjust weights')
@@ -156,7 +155,7 @@ if __name__ == '__main__':
     parser.add_argument('--fp16', action='store_true',
                         help='Use nVidia fp16 (require apex module)')
     args = parser.parse_args()
-    classification(
+    regression(
         config_path=args.config_path,
         train_dataset_path=args.train_dataset_path,
         eval_dataset_path=args.eval_dataset_path,
@@ -174,7 +173,7 @@ if __name__ == '__main__':
         epochs=args.epochs,
         per_save_epochs=args.per_save_epochs,
         mode=args.mode,
-        label_num=args.label_num,
+        output_num=args.output_num,
         balance_weight=args.balance_weight,
         balance_sample=args.balance_sample,
         under_sampling=args.under_sampling,
