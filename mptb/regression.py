@@ -290,10 +290,15 @@ class BertRegressor(object):
                     y_trues.append(t)
 
             if logger is not None:
-                mae = mean_absolute_error(y_trues.reshape(-1), y_preds.reshape(-1))
-                logger.info(str(mae))
+                mae = 0
+                for t, p in zip(y_trues, y_preds):
+                    mae += mean_absolute_error(t, p
+                logger.info(str(mae/len(y_trues)))
             else:
-                print(mean_absolute_error(y_trues.reshape(-1), y_preds.reshape(-1)))
+                mae = 0
+                for t, p in zip(y_trues, y_preds):
+                    mae += mean_absolute_error(t, p)
+                print(mae/len(y_trues))
 
         return self.helper.evaluate(
             process, self.model, dataset, sampler, batch_size, model_path, example_reports,
