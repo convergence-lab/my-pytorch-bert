@@ -252,7 +252,7 @@ class BertRegressor(object):
         def process(batch, model, iter_bar, step):
             input_ids, input_mask, label_id = batch
             logits = model(input_ids, input_mask)
-            loss = criterion(logits.view(-1, self.model.label_len), label_id.view(-1))
+            loss = criterion(logits.view(-1), label_id.view(-1))
             _, label_pred = logits.max(1)
             example = Example(label_pred.tolist(), label_id.tolist())
             return loss, example
