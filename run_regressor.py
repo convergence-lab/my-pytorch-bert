@@ -79,7 +79,8 @@ def regression(
         score = estimator.evaluate(dataset=eval_data_set, batch_size=batch_size, log_dir=log_dir)
         print(score)
 
-    else:
+    elif mode == "eval":
+        print("Evaluation")
         estimator = BertRegressor(
             config_path=config_path,
             max_pos=max_pos,
@@ -88,13 +89,29 @@ def regression(
             model_path=model_path,
             dataset_path=eval_dataset_path,
             header_skip=not read_head,
-            label_num=label_num,
+            output_num=output_num,
             tokenizer_name=tokenizer_name,
             under_sampling=under_sampling,
             fp16=fp16
         )
         score = estimator.evaluate(batch_size=batch_size, log_dir=log_dir)
         print(score)
+    else:
+        print("Prediction")
+        predictor = BertRegressor(
+            config_path=config_path,
+            max_pos=max_pos,
+            vocab_path=vocab_path,
+            sp_model_path=sp_model_path,
+            model_path=model_path,
+            dataset_path=eval_dataset_path,
+            header_skip=not read_head,
+            output_num=output_num,
+            tokenizer_name=tokenizer_name,
+            under_sampling=under_sampling,
+            fp16=fp16
+        )
+        preds = predictor.prediction()
 
 
 if __name__ == '__main__':

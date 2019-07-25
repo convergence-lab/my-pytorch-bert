@@ -306,6 +306,41 @@ class BertRegressor(object):
             process, self.model, dataset, sampler, batch_size, model_path, example_reports,
             compute_epoch_score=compute_epoch_score, epochs=epochs)
 
+    def prediction(self,
+                    dataset=None,
+                    sampler=None,
+                    model_path=None,
+                    batch_size=2,
+                    epochs=1,
+                    is_reports_output=True,
+                    log_dir=None):
+        if model_path is None and hasattr(self, 'model_path'):
+            model_path = self.model_path
+            self.learned = True
+
+        if not hasattr(self, 'learned') or not hasattr(self, 'model'):
+            raise ValueError('not learning model.')
+
+        if dataset is None:
+            if hasattr(self, 'dataset'):
+                dataset = self.dataset
+            else:
+                raise ValueError('require dataset')
+                
+        Example = namedtuple('Example', ('pred', 'true'))
+        criterion = SmoothL1Loss()
+
+        def process(batch, model, iter_bar, step):
+            input_ids, input_mask, label_id = batch
+            logits = model(input_ids, input_mask)
+            loss = criterion(logits.view(-1), label_id.view(-1))
+            example = Example(logits.tolist(), label_id.tolist())
+            return loss, example
+
+        preds = self.helper.predict(process, self.model, dataset, model_file=model_path)
+        print(preds)
+
+
     def regression(
         self,
         dataset=None,
