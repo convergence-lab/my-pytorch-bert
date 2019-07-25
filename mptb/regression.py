@@ -259,10 +259,10 @@ class BertRegressor(object):
 
         def compute_epoch_score(examples):
             accuracy = 0.
+            score = 0
             for preds, trues in examples:
-                if preds == trues:
-                    accuracy += 1
-            return accuracy/len(examples)
+                score += mean_absolute_error(preds, trues)
+            return score/len(examples)
 
         if not is_reports_output:
             return self.helper.evaluate(
