@@ -45,6 +45,7 @@ class RegressionDataset(Dataset):
         self.records = []
         vocab = set()
         pad_token="[PAD]"
+        self.l_num = label_num
 
         if len(sentence_a) > 0:
             raise Exception("Not implemented")
@@ -83,7 +84,7 @@ class RegressionDataset(Dataset):
         return self.per_label_records_num
 
     def label_num(self):
-        return 25
+        return self.l_num
 
     def next_under_samples(self):
         if self.under_sample_num is None:

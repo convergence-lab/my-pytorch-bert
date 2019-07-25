@@ -63,7 +63,8 @@ class BertRegressor(object):
             self.dataset = self.get_dataset(
                 self.tokenizer,
                 dataset_path=dataset_path,
-                header_skip=header_skip, under_sampling=under_sampling)
+                header_skip=header_skip, under_sampling=under_sampling,
+                label_num=output_num)
             label_num = self.dataset.label_num()
 
         if label_num < 0:
@@ -94,7 +95,7 @@ class BertRegressor(object):
         tokenizer=None,
         dataset_path=None, header_skip=True,
         sentence_a=[], sentence_b=[], labels=[],
-        under_sampling=False
+        under_sampling=False, label_num=-1
     ):
         if tokenizer is None and hasattr(self, 'tokenizer'):
             tokenizer = self.tokenizer
@@ -104,7 +105,8 @@ class BertRegressor(object):
         return RegressionDataset(
             tokenizer=tokenizer, max_pos=self.max_pos, dataset_path=dataset_path, header_skip=header_skip,
             sentence_a=sentence_a, sentence_b=sentence_b, labels=labels,
-            under_sampling=under_sampling
+            under_sampling=under_sampling,
+            label_num=label_num
         )
 
     @staticmethod
@@ -326,7 +328,7 @@ class BertRegressor(object):
                 dataset = self.dataset
             else:
                 raise ValueError('require dataset')
-                
+
         Example = namedtuple('Example', ('pred', 'true'))
         criterion = SmoothL1Loss()
 
