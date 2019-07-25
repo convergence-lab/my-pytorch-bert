@@ -51,5 +51,5 @@ class Regressor(nn.Module):
 
     def forward(self, input_ids, input_mask):
         _, pooled_output = self.bert(input_ids, input_mask)
-        x =  self.regressor(self.dropout(pooled_output)))
+        x =  self.regressor(self.dropout(pooled_output))
         return x
