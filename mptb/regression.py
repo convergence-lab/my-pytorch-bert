@@ -16,6 +16,7 @@
 
 import os
 import numpy as np
+from sklearn.metrics import mean_absolute_error
 from collections import namedtuple
 import torch
 from torch.nn import SmoothL1Loss
