@@ -254,7 +254,7 @@ class BertRegressor(object):
             input_ids, input_mask, label_id = batch
             logits = model(input_ids, input_mask)
             loss = criterion(logits.view(-1), label_id.view(-1))
-            example = Example(label_pred.tolist(), label_id.tolist())
+            example = Example(label_pred.tolist(), logits.tolist())
             return loss, example
 
         def compute_epoch_score(examples):
