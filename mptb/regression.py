@@ -263,7 +263,7 @@ class BertRegressor(object):
             score = 0
             for preds, trues in examples:
                 preds = np.array(preds).squeeze()
-                trues = np.array(trues)
+                trues = np.array(trues).squeeze()
                 score += mean_absolute_error(preds, trues)
             return score/len(examples)
 
