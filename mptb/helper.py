@@ -105,7 +105,6 @@ class Helper(object):
 
             if adjustment_every_epoch is not None:
                 adjustment_every_epoch(model, dataset, total_loss, total_steps, optimizer)
-
         return total_loss / total_steps
 
     def evaluate(
@@ -203,4 +202,3 @@ class Helper(object):
                 predict = process(batch, model, iter_bar, step)
                 predicts.append(predict)
         return predicts
-
