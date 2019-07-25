@@ -15,6 +15,7 @@
 """Bert Regression"""
 
 import os
+import numpy as np
 from collections import namedtuple
 import torch
 from torch.nn import SmoothL1Loss
@@ -289,16 +290,15 @@ class BertRegressor(object):
                 for t in trues:
                     y_trues.append(t)
 
+            y_trues = np.array(y_trues).squeeze()
+            y_preds = np.array(y_preds)
             if logger is not None:
-                mae = 0
-                for t, p in zip(y_trues, y_preds):
-                    mae += mean_absolute_error(t, p)
-                logger.info(str(mae/len(y_trues)))
+                print(y_trues.shape, y_preds.shape)
+                mae = mean_absolute_error(y_trues, y_preds)
+                logger.info(str(mae))
             else:
-                mae = 0
-                for t, p in zip(y_trues, y_preds):
-                    mae += mean_absolute_error(t, p)
-                print(mae/len(y_trues))
+                mae = mean_absolute_error(y_trues, y_preds)
+                print(mae)
 
         return self.helper.evaluate(
             process, self.model, dataset, sampler, batch_size, model_path, example_reports,
