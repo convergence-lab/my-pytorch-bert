@@ -200,5 +200,5 @@ class Helper(object):
             batch = tuple(t.to(self.device) for t in batch)
             with torch.no_grad():
                 predict = process(batch, model, iter_bar, step)
-                predicts.append(predict)
+                predicts.append(predict.tonumpy())
         return predicts
