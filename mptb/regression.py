@@ -342,7 +342,7 @@ class BertRegressor(object):
 
         preds = self.helper.predict(process, self.model, dataset, model_file=model_path)
         with open("preds.json", "w") as f:
-            json.dump(preds, f, indent=2)
+            json.dump(preds, f, indent=2, ensure_ascii=False)
 
 
     def regression(
