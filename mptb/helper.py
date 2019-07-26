@@ -197,8 +197,9 @@ class Helper(object):
         predicts = []
         iter_bar = tqdm(dataloader, desc="XX.XXXX avg loss ", position=0)
         for step, batch in enumerate(iter_bar):
-            batch = tuple(t.to(self.device) for t in batch)
+            text = batch[3]
+            batch = tuple(t.to(self.device) for t in batch[:3])
             with torch.no_grad():
                 _, predict = process(batch, model, iter_bar, step)
-                predicts.append({"pred":predict[0][0], "true": predict[1][0][0]})
+                predicts.append({"pred":predict[0][0], "true": predict[1][0][0], "text": text})
         return predicts

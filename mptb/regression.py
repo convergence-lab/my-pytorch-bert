@@ -173,7 +173,7 @@ class BertRegressor(object):
         criterion = SmoothL1Loss()
 
         def process(batch, model, iter_bar, epochs, step):
-            input_ids, input_mask, label_id = batch
+            input_ids, input_mask, label_id, text = batch
             logits = model(input_ids, input_mask)
             loss = criterion(logits.view(-1), label_id.view(-1))
             return loss
@@ -255,7 +255,7 @@ class BertRegressor(object):
             logger = get_logger('eval', log_dir, False)
 
         def process(batch, model, iter_bar, step):
-            input_ids, input_mask, label_id = batch
+            input_ids, input_mask, label_id, text = batch
             logits = model(input_ids, input_mask)
             loss = criterion(logits.view(-1), label_id.view(-1))
             example = Example(logits.tolist(), label_id.tolist())
@@ -334,11 +334,11 @@ class BertRegressor(object):
         criterion = SmoothL1Loss()
 
         def process(batch, model, iter_bar, step):
-            input_ids, input_mask, label_id = batch
+            input_ids, input_mask, label_i, text = batch
             logits = model(input_ids, input_mask)
             loss = criterion(logits.view(-1), label_id.view(-1))
             example = Example(logits.tolist(), label_id.tolist())
-            return loss, example
+            return loss, example, text
 
         preds = self.helper.predict(process, self.model, dataset, model_file=model_path)
         with open("preds.json", "w") as f:

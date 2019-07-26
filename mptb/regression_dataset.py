@@ -58,6 +58,7 @@ class RegressionDataset(Dataset):
                 input_tokens = tokenize(item["text"], tokenizer)
                 vocab.update(input_tokens)
                 input_mask = [1] * len(input_tokens)
+                text = item[text]
 
                 num_zero_pad = max_pos - len(input_tokens)
                 if num_zero_pad >= 0:
@@ -66,19 +67,19 @@ class RegressionDataset(Dataset):
                 else:
                     input_tokens = input_tokens[:max_pos]
                     input_mask = input_mask[:max_pos]
-                bert_ids = [input_tokens, input_mask, target]
+                bert_ids = [input_tokens, input_mask, target, text]
                 self.records.append(bert_ids)
             vocab = build_vocab(vocab)
             for index, item in enumerate(self.records):
-                input_tokens, input_masks, target = item
+                input_tokens, input_masks, target, text = item
                 input_ids = convert_tokens_to_ids(vocab, input_tokens)
-                self.records[index] = [input_ids, input_masks, target]
+                self.records[index] = [input_ids, input_masks, target, text]
 
     def __len__(self):
         return len(self.records)
 
     def __getitem__(self, index):
-        return torch.tensor(self.records[index][0], dtype=torch.long), torch.tensor(self.records[index][1], dtype=torch.long), torch.tensor(self.records[index][2], dtype=torch.float)
+        return torch.tensor(self.records[index][0], dtype=torch.long), torch.tensor(self.records[index][1], dtype=torch.long), torch.tensor(self.records[index][2], dtype=torch.float), self.records[index][3]
 
     def per_label_record(self):
         return self.per_label_records_num
