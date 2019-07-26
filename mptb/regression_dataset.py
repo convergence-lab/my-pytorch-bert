@@ -58,7 +58,7 @@ class RegressionDataset(Dataset):
                 input_tokens = tokenize(item["text"], tokenizer)
                 vocab.update(input_tokens)
                 input_mask = [1] * len(input_tokens)
-                text = item[text]
+                text = item["text"]
 
                 num_zero_pad = max_pos - len(input_tokens)
                 if num_zero_pad >= 0:
