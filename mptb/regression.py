@@ -255,7 +255,7 @@ class BertRegressor(object):
             logger = get_logger('eval', log_dir, False)
 
         def process(batch, model, iter_bar, step):
-            input_ids, input_mask, label_id, text = batch
+            input_ids, input_mask, label_id = batch
             logits = model(input_ids, input_mask)
             loss = criterion(logits.view(-1), label_id.view(-1))
             example = Example(logits.tolist(), label_id.tolist())
