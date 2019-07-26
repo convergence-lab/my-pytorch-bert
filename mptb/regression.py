@@ -16,6 +16,7 @@
 
 import os
 import numpy as np
+import json
 from sklearn.metrics import mean_absolute_error
 from collections import namedtuple
 import torch
@@ -340,7 +341,7 @@ class BertRegressor(object):
             return loss, example
 
         preds = self.helper.predict(process, self.model, dataset, model_file=model_path)
-        preds = [{"pred": t.pred.tolist(), "true": t.true.tolist()} for t in preds]
+        preds = [{"pred": t.pred.tolist(), "true": t.true.tolist()} for p in preds for t in p]
         with open("preds.json", "w") as f:
             json.dump(presds, f, indent=2)
 
