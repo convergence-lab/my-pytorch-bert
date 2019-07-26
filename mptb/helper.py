@@ -79,6 +79,7 @@ class Helper(object):
             iter_bar = tqdm(
                 dataloader, desc="E-{:0=2} : XX.XXXX avg loss ".format(e), position=0)
             for step, batch in enumerate(iter_bar):
+                batch = batch[:3]
                 batch = tuple(t.to(self.device) for t in batch)
                 loss = process(batch, model, iter_bar, e, step)
 
