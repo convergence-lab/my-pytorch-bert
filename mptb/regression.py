@@ -343,7 +343,7 @@ class BertRegressor(object):
         preds = self.helper.predict(process, self.model, dataset, model_file=model_path)
         preds = [{"pred": t[0].tonumpy().tolist(), "true": t[1].tonumpy().tolist()} for p in preds for t in p]
         with open("preds.json", "w") as f:
-            json.dump(presds, f, indent=2)
+            json.dump(preds, f, indent=2)
 
 
     def regression(
