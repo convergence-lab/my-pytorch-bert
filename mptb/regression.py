@@ -340,7 +340,9 @@ class BertRegressor(object):
             return loss, example
 
         preds = self.helper.predict(process, self.model, dataset, model_file=model_path)
-        print(preds)
+        preds = [t[0].tolist(), t[1].tolist() for t in preds]
+        with open("preds.json", "w") as :
+            json.dump(presds, f, indent=2)
 
 
     def regression(
