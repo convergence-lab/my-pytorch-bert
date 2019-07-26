@@ -341,7 +341,7 @@ class BertRegressor(object):
 
         preds = self.helper.predict(process, self.model, dataset, model_file=model_path)
         preds = [[t[0].tolist(), t[1].tolist()] for t in preds]
-        with open("preds.json", "w") as :
+        with open("preds.json", "w") as f:
             json.dump(presds, f, indent=2)
 
 
