@@ -173,7 +173,7 @@ class BertRegressor(object):
         criterion = SmoothL1Loss()
 
         def process(batch, model, iter_bar, epochs, step):
-            input_ids, input_mask, label_id, text = batch
+            input_ids, input_mask, label_id = batch
             logits = model(input_ids, input_mask)
             loss = criterion(logits.view(-1), label_id.view(-1))
             return loss
