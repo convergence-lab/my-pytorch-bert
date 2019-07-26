@@ -199,6 +199,6 @@ class Helper(object):
         for step, batch in enumerate(iter_bar):
             batch = tuple(t.to(self.device) for t in batch)
             with torch.no_grad():
-                predict = process(batch, model, iter_bar, step)
+                _, predict = process(batch, model, iter_bar, step)
                 predicts.append(predict.tonumpy())
         return predicts
